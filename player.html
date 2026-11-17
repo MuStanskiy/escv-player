@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="referrer" content="strict-origin-when-cross-origin" />
+<title>Escalade-V YouTube Player</title><style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#030509}
+iframe{display:block;width:100%;height:100%;border:0}
+</style></head><body>
+<script>
+(function () {
+  const id = new URLSearchParams(location.search).get('v') || '';
+  if (!/^[A-Za-z0-9_-]{11}$/.test(id)) { document.body.textContent = 'Invalid video ID'; return; }
+  const iframe = document.createElement('iframe');
+  iframe.id = 'player';
+  iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&enablejsapi=1&controls=1&playsinline=1&rel=0&origin='+encodeURIComponent(location.origin);
+  iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+  iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+  iframe.allowFullscreen = true;
+  document.body.appendChild(iframe);
+  function cmd(fn, args) {try {iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:fn,args:args||[]}), '*');} catch(e) {}}
+  window.escvPause = paused => cmd(paused ? 'pauseVideo' : 'playVideo', []);
+  window.escvVolume = value => cmd('setVolume', [Math.max(0,Math.min(100,value))]);
+}());
+</script></body></html>
